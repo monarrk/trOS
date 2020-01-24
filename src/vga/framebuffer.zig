@@ -26,12 +26,12 @@ const PSFFont = packed struct {
 
 const FontEmbed = @embedFile("font.psf");
 
-const Width = u32(1920);
-const Height = u32(1080);
-const Pitch = u32(7680);
+const Width: u32 = 192;
+const Height: u32 = 1080;
+const Pitch: u32 = 7680;
 
-var column = u32(0);
-var row = u32(0);
+var column: u32 = 0;
+var row: u32 = 0;
 
 // @NOTE: This should work well for on-the-fly font changes.
 // For example, we could start with a non-unicode font, then
@@ -97,7 +97,7 @@ pub fn init() ?void {
 pub fn put(c: u8) void {
     const bytesPerLine = (Font.width + 7) / 8;
     var offset = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
-    var idx = usize(0);
+    var idx: usize = 0;
     switch(c) {
         '\r' => {
             for ("\nREADY:> ") |d|
@@ -112,10 +112,10 @@ pub fn put(c: u8) void {
             if (column > 8)
                 column -= 1;
             offset = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
-            var y = usize(0);
+            var y: u32 = 0;
             while (y < Font.height) : (y += 1) {
                 var line = offset;
-                var x = usize(0);
+                var x: usize = 0;
                 while (x < Font.width) : (x += 1) {
                     LFB[line] = 0;
                     LFB[line + 1] = 0;
@@ -131,13 +131,13 @@ pub fn put(c: u8) void {
             } else {
                 idx += (Font.headersize + (0 * Font.bytesPerGlyph));
             }
-            var y = usize(0);
+            var y: usize = 0;
             while (y < Font.height) : (y += 1) {
                 var line = offset;
-                var mask = u32(1) << @truncate(u5, (Font.width - 1));
-                var x = usize(0);
+                var mask = @as(u32, 1) << @truncate(u5, (Font.width - 1));
+                var x: u32 = 0;
                 while (x < Font.width) : (x += 1) {
-                    var color = u8(0);
+                    var color: u8 = 0;
                     if ((FontEmbed[idx]) & mask == 0) {
                         color = 0;
                     } else {
@@ -171,7 +171,7 @@ fn writeHandler(context: void, data: []const u8) NoError!void {
 /// `write` manages all writes for the framebuffer. It takes formatted arguments, in the
 /// same manner that `std.debug.warn()` does. It then passes them to `writeHandler`
 /// for writing out.
-pub fn write(comptime data: []const u8, args: ...) void {
+pub fn write(comptime data: []const u8, args: var) void {
     std.fmt.format({}, NoError, writeHandler, data, args) catch |e| switch (e) {};
 }
 

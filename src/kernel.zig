@@ -18,17 +18,17 @@ const Version = util.Version;
 
 pub fn panic(msg: []const u8, error_stack_trace: ?*builtin.StackTrace) noreturn {
     @setCold(true);
-    uart.write("\nKERNEL PANIC: \n");
-    uart.write("MESSAGE: {}", msg);
-    uart.write("STACK TRACE:\n");
+    uart.write("\nKERNEL PANIC: \n", .{});
+    uart.write("MESSAGE: {}", .{msg});
+    uart.write("STACK TRACE:\n", .{});
     util.hang();
 }
 
 export fn kmain() noreturn {
     uart.init();
-    uart.write("trOS v{}\r", Version);
+    uart.write("trOS v{}\r", .{Version});
     framebuffer.init().?;
-    framebuffer.write("trOS v{}\r", Version);
+    framebuffer.write("trOS v{}\r", .{Version});
     while (true) {
         const x = uart.get();
         uart.put(x);

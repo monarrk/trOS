@@ -15,28 +15,6 @@ pub fn build(b: *Builder) void {
     // Use eabihf for freestanding arm code with hardware float support
     exe.setTarget(builtin.Arch{ .aarch64 = builtin.Arch.Arm64.v8 }, builtin.Os.freestanding, builtin.Abi.eabihf);
 
-    const qemu = b.step("qemu", "run kernel in qemu");
-
-    const qemu_path = if (builtin.os == builtin.Os.windows) "C:/Program Files/qemu/qemu-system-aarch64.exe" else "qemu-system-aarch64";
-    const run_qemu = b.addSystemCommand([][]const u8 { qemu_path });
-    run_qemu.addArg("-kernel");
-    run_qemu.addArtifactArg(exe);
-    run_qemu.addArgs([][]const u8{
-        "-m",
-        "256",
-        "-M",
-        "raspi3",
-        "-serial",
-        if (want_pty) "pty" else "stdio",
-    });
-    if (want_gdb) {
-        run_qemu.addArgs([][]const u8{
-            "-S",
-            "-s",
-        });
-    }
-    qemu.dependOn(&run_qemu.step);
-
     b.default_step.dependOn(&exe.step);
     b.installArtifact(exe);
 }
