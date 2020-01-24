@@ -96,7 +96,7 @@ pub fn init() ?void {
 
 pub fn put(c: u8) void {
     const bytesPerLine = (Font.width + 7) / 8;
-    var offset = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
+    var offset: usize = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
     var idx: usize = 0;
     switch(c) {
         '\r' => {
@@ -134,7 +134,9 @@ pub fn put(c: u8) void {
             var y: usize = 0;
             while (y < Font.height) : (y += 1) {
                 var line = offset;
-                var mask = @as(u32, 1) << @truncate(u5, (Font.width - 1));
+
+                // [TODO] Segfaulting!!
+                var mask: u32 = @as(u32, 1) << @truncate(u5, (Font.width - 1));
                 var x: u32 = 0;
                 while (x < Font.width) : (x += 1) {
                     var color: u8 = 0;
@@ -172,7 +174,7 @@ fn writeHandler(context: void, data: []const u8) NoError!void {
 /// same manner that `std.debug.warn()` does. It then passes them to `writeHandler`
 /// for writing out.
 pub fn write(comptime data: []const u8, args: var) void {
-    std.fmt.format({}, NoError, writeHandler, data, args) catch |e| switch (e) {};
+    std.fmt.format({}, NoError, writeHandler, data, args) catch |e| switch (e) {}; 
 }
 
 // @PENDING-FIX: Test fails with: "TODO buf_read_value_bytes packed struct"

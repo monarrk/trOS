@@ -19,8 +19,8 @@ const Version = util.Version;
 pub fn panic(msg: []const u8, error_stack_trace: ?*builtin.StackTrace) noreturn {
     @setCold(true);
     uart.write("\nKERNEL PANIC: \n", .{});
-    uart.write("MESSAGE: {}", .{msg});
-    uart.write("STACK TRACE:\n", .{});
+    uart.write("MESSAGE: {}\n", .{msg});
+    uart.write("STACK TRACE: {}\n", .{error_stack_trace});
     util.hang();
 }
 
