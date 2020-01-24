@@ -83,3 +83,5 @@ an inssue when USB support is available.
 thanks to [andrew kelly](https://github.com/andrewrk/clashos/) for the build file.
 
 thanks to [bzt](https://github.com/bztsrc/raspi3-tutorial/0B_readsector) for the emmc/sd card code.
+
+thanks to [powerline fonts](https://github.com/powerline/fonts/blob/master/Terminus/PSF/ter-powerline-v32b.psf.gz) for src/vga/font.psf.

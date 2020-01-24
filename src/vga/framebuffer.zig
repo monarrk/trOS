@@ -13,7 +13,7 @@ const NoError = types.errorTypes.NoError;
 const Version = util.Version;
 
 /// Respresent a PSF font.
-const PSFFont = packed struct {
+const PSFFont = extern struct {
     magic: u32,
     version: u32,
     headersize: u32,
@@ -36,8 +36,31 @@ var row: u32 = 0;
 // @NOTE: This should work well for on-the-fly font changes.
 // For example, we could start with a non-unicode font, then
 // swap to one if the need arises and continue printing seemlessly.
-var Font: *const PSFFont = @ptrCast(*const PSFFont, &FontEmbed);
+var Font = load_font();
 var LFB: [*]volatile u8 = undefined;
+
+fn load_font() PSFFont {
+    const bytes = FontEmbed;
+    var magic = @bitCast(u32, [4]u8 { bytes[0], bytes[1], bytes[2], bytes[3] });
+    var version = @bitCast(u32, [4]u8 { bytes[4], bytes[5], bytes[6], bytes[7] });
+    var headersize = @bitCast(u32, [4]u8 { bytes[8], bytes[9], bytes[10], bytes[11] });
+    var flags = @bitCast(u32, [4]u8 { bytes[12], bytes[13], bytes[14], bytes[15] });
+    var numglyph = @bitCast(u32, [4]u8 { bytes[16], bytes[17], bytes[18], bytes[19] });
+    var bytesPerGlyph = @bitCast(u32, [4]u8 { bytes[20], bytes[21], bytes[22], bytes[23] });
+    var height = @bitCast(u32, [4]u8 { bytes[24], bytes[25], bytes[26], bytes[27] });
+    var width = @bitCast(u32, [4]u8 { bytes[28], bytes[29], bytes[30], bytes[31] });
+
+    return PSFFont {
+        .magic = magic,
+        .version = version,
+        .headersize = headersize,
+        .flags = flags,
+        .numglyph = numglyph,
+        .bytesPerGlyph = bytesPerGlyph,
+        .height = height,
+        .width = width,
+    };
+}
 
 pub fn init() ?void {
     mbox.mbox[0] = 35*4;
@@ -89,15 +112,17 @@ pub fn init() ?void {
         std.debug.assert(mbox.mbox[6] == 1080);
         std.debug.assert(mbox.mbox[33] == 7680);
         LFB = @intToPtr([*]volatile u8, mbox.mbox[28]);
+        //uart.write("magic: {}\nversion: {}\nheadersize: {}\nflags: {}\nnumglyph: {}\nbytesPerGlyph: {}\nheight: {}\nwidth: {}\n", .{Font.magic, Font.version, Font.headersize, Font.flags, Font.numglyph, Font.bytesPerGlyph, Font.height, Font.width});
     } else {
         return null;
     }
 }
 
 pub fn put(c: u8) void {
-    const bytesPerLine = (Font.width + 7) / 8;
+    const bytesPerLine: u32 = (Font.width + 7) / 8;
     var offset: usize = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
     var idx: usize = 0;
+
     switch(c) {
         '\r' => {
             for ("\nREADY:> ") |d|
@@ -131,12 +156,12 @@ pub fn put(c: u8) void {
             } else {
                 idx += (Font.headersize + (0 * Font.bytesPerGlyph));
             }
+
             var y: usize = 0;
             while (y < Font.height) : (y += 1) {
                 var line = offset;
-
                 // [TODO] Segfaulting!!
-                var mask: u32 = @as(u32, 1) << @truncate(u5, (Font.width - 1));
+                var mask = @as(u32, 1) << @truncate(u5, (Font.width - 1));
                 var x: u32 = 0;
                 while (x < Font.width) : (x += 1) {
                     var color: u8 = 0;
@@ -151,9 +176,11 @@ pub fn put(c: u8) void {
                     mask >>= 1;
                     line += 4;
                 }
+
                 idx += bytesPerLine;
                 offset += Pitch;
             }
+
             column += 1;
         },
     }
