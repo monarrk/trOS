@@ -29,7 +29,7 @@ you can start a gdb remote server:
 zig build qemu -Dgdb
 ```
 
-if you want a very small binary:
+if you want a very small binary: (NOTE this usually makes the kernel not functional; not recommended)
 
 ```
 zig build -Drelease-fast
