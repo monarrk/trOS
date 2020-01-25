@@ -125,7 +125,7 @@ pub fn put(c: u8) void {
 
     switch(c) {
         '\r' => {
-            for ("\nREADY:> ") |d|
+            for ("\n" ++ util.PROMPT) |d|
                 put(d);
         },
         '\n' => {

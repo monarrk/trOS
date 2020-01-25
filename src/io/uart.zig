@@ -1,6 +1,7 @@
 const std = @import("std");
 const io = @import("../io.zig");
 const types = @import("../types.zig");
+const util = @import("../util.zig");
 
 const mmio = io.mmio;
 const gpio = io.gpio;
@@ -72,7 +73,7 @@ pub fn put(c: u8) void {
         '\r' => {
             mmio.write(UART_DR, '\n').?;
             mmio.write(UART_DR, '\r').?;
-            for ("READY:> ") |d|
+            for (util.PROMPT) |d|
                 put(d);
         },
         else => {

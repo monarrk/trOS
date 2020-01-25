@@ -135,3 +135,5 @@ pub fn waitMsec(secs: u32) void {
         while (getSystemTimer() < t + n) {}
     }
 }
+
+pub const PROMPT = ":: >  ";
