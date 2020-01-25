@@ -112,7 +112,7 @@ pub fn init() ?void {
         std.debug.assert(mbox.mbox[6] == 1080);
         std.debug.assert(mbox.mbox[33] == 7680);
         LFB = @intToPtr([*]volatile u8, mbox.mbox[28]);
-        uart.write("magic: {}\nversion: {}\nheadersize: {}\nflags: {}\nnumglyph: {}\nbytesPerGlyph: {}\nheight: {}\nwidth: {}\n", .{Font.magic, Font.version, Font.headersize, Font.flags, Font.numglyph, Font.bytesPerGlyph, Font.height, Font.width});
+        // uart.write("magic: {}\nversion: {}\nheadersize: {}\nflags: {}\nnumglyph: {}\nbytesPerGlyph: {}\nheight: {}\nwidth: {}\n", .{Font.magic, Font.version, Font.headersize, Font.flags, Font.numglyph, Font.bytesPerGlyph, Font.height, Font.width});
     } else {
         return null;
     }
