@@ -13,20 +13,20 @@ const NoError = types.errorTypes.NoError;
 // See page 90 of the BCM2835 manual for information about most of these.
 
 // Constants for UART0 addresses.
-const UART_DR = Register { .ReadWrite = mmio.MMIO_BASE + 0x00201000 };
-const UART_FR = Register { .ReadOnly = mmio.MMIO_BASE + 0x00201018 };
-const UART_IBRD = Register { .WriteOnly = mmio.MMIO_BASE + 0x00201024 };
-const UART_FBRD = Register { .WriteOnly = mmio.MMIO_BASE + 0x00201028 };
-const UART_LCRH = Register { .WriteOnly = mmio.MMIO_BASE + 0x0020102C };
-const UART_CR = Register { .WriteOnly = mmio.MMIO_BASE + 0x00201030 };
-const UART_IMSC = Register { .ReadOnly = mmio.MMIO_BASE + 0x00201038 };
-const UART_ICR = Register { .WriteOnly = mmio.MMIO_BASE + 0x00201044 };
+const UART_DR = Register{ .ReadWrite = mmio.MMIO_BASE + 0x00201000 };
+const UART_FR = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00201018 };
+const UART_IBRD = Register{ .WriteOnly = mmio.MMIO_BASE + 0x00201024 };
+const UART_FBRD = Register{ .WriteOnly = mmio.MMIO_BASE + 0x00201028 };
+const UART_LCRH = Register{ .WriteOnly = mmio.MMIO_BASE + 0x0020102C };
+const UART_CR = Register{ .WriteOnly = mmio.MMIO_BASE + 0x00201030 };
+const UART_IMSC = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00201038 };
+const UART_ICR = Register{ .WriteOnly = mmio.MMIO_BASE + 0x00201044 };
 
 pub fn init() void {
     // Temporarily disable UART0 for config
     mmio.write(UART_CR, 0).?;
     // Setup clock mailbox call
-    mbox.mbox[0] = 9*4;
+    mbox.mbox[0] = 9 * 4;
     mbox.mbox[1] = mbox.MBOX_REQUEST;
     mbox.mbox[2] = mbox.MBOX_TAG_SETCLKRATE;
     mbox.mbox[3] = 12;
@@ -39,7 +39,7 @@ pub fn init() void {
 
     var r: u32 = mmio.read(gpio.GPFSEL1).?;
     // Clean gpio pins 14 and 15
-    r &= ~@as(u32, ((7 << 12) | (7 << 15)));
+    r &= ~u32(((7 << 12) | (7 << 15)));
     // Set alt0 for pins 14 and 15. alt0 functionality on these pins is Tx/Rx
     // respectively for UART0. Note that alt5 on these pins is Tx/Rx for UART1.
     r |= (4 << 12) | (4 << 15);
@@ -78,7 +78,7 @@ pub fn put(c: u8) void {
         },
         else => {
             mmio.write(UART_DR, c).?;
-        }
+        },
     }
 }
 

@@ -47,4 +47,4 @@ zig build -Drelease-safe
 
 thanks to [andrew kelly](https://github.com/andrewrk/clashos/) for the build file.
 
-thanks to [bzt](https://github.com/bztsrc/raspi3-tutorial/0B_readsector) for the emmc/sd card code.
+thanks to [bzt](https://github.com/bztsrc/raspi3-tutorial/blob/master/0B_readsector) for the emmc/sd card code.

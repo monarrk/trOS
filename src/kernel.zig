@@ -24,8 +24,15 @@ pub fn panic(msg: []const u8, error_stack_trace: ?*builtin.StackTrace) noreturn 
     util.hang();
 }
 
+fn hang() noreturn {
+    util.powerOff();
+    util.hang();
+}
+
 export fn kmain() noreturn {
-    uart.init();
+    //uart.init();
+    emmc.SDHC.init() catch hang();
+
     uart.write("trOS v{}\r", .{Version});
     framebuffer.init().?;
     framebuffer.write("trOS v{}\r", .{Version});
@@ -35,6 +42,5 @@ export fn kmain() noreturn {
         framebuffer.put(x);
     }
     // enter low power state and hang if we get somehow get out of the while loop.
-    util.powerOff();
-    util.hang();
+    hang();
 }

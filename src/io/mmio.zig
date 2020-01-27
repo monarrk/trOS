@@ -25,8 +25,13 @@ pub fn write(reg: Register, data: u32) ?void {
         },
         Register.ReadWrite => {
             @intToPtr(*volatile u32, reg.ReadWrite).* = data;
-        }
+        },
     }
+}
+
+/// Write to a register without the Register type
+pub fn write_raw(reg: u32, data: u32) void {
+    @intToPtr(*volatile u32, reg).* = data;
 }
 
 /// Read data to a given MMIO register, returning null.
@@ -40,7 +45,7 @@ pub fn read(reg: Register) ?u32 {
         },
         Register.ReadWrite => {
             return @intToPtr(*volatile u32, reg.ReadWrite).*;
-        }
+        },
     }
 }
 

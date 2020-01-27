@@ -2,31 +2,33 @@ const builtin = @import("builtin");
 const std = @import("std");
 const io = @import("../io.zig");
 const types = @import("../types.zig");
+const delay = @import("../delay.zig");
 
 const mmio = io.mmio;
 const uart = io.uart;
+const gpio = io.gpio;
 const SDError = types.errorTypes.SDError;
 const Register = types.regs.Register;
 
 // NOTE(sam): this is pretty much a direct port of https://github.com/bztsrc/raspi3-tutorial/0B_readsector.
 
-const EMMC_ARG1 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300008 };
-const EMMC_ARG2 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300000 };
-const EMMC_BLKSIZECNT = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300004 };
-const EMMC_CMDTM = Register { .ReadOnly = mmio.MMIO_BASE + 0x0030000C };
-const EMMC_RESP0 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300010 };
-const EMMC_RESP1 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300014 };
-const EMMC_RESP2 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300018 };
-const EMMC_RESP3 = Register { .ReadOnly = mmio.MMIO_BASE + 0x0030001C };
-const EMMC_DATA = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300020 };
-const EMMC_STATUS = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300024 };
-const EMMC_CONTROL0 = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300028 };
-const EMMC_CONTROL1 = Register { .ReadOnly = mmio.MMIO_BASE + 0x0030002C };
-const EMMC_INTERRUPT = Register { .ReadWrite = mmio.MMIO_BASE + 0x00300030 };
-const EMMC_INT_MASK = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300034 };
-const EMMC_INT_EN = Register { .ReadOnly = mmio.MMIO_BASE + 0x00300038 };
-const EMMC_CONTROL2 = Register { .ReadOnly = mmio.MMIO_BASE + 0x0030003C };
-const EMMC_SLOTISR_VER = Register { .ReadOnly = MMIO_BASE + 0x003000FC };
+const EMMC_ARG1 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300008 };
+const EMMC_ARG2 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300000 };
+const EMMC_BLKSIZECNT = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300004 };
+const EMMC_CMDTM = Register{ .ReadOnly = mmio.MMIO_BASE + 0x0030000C };
+const EMMC_RESP0 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300010 };
+const EMMC_RESP1 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300014 };
+const EMMC_RESP2 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300018 };
+const EMMC_RESP3 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x0030001C };
+const EMMC_DATA = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300020 };
+const EMMC_STATUS = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300024 };
+const EMMC_CONTROL0 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300028 };
+const EMMC_CONTROL1 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x0030002C };
+const EMMC_INTERRUPT = Register{ .ReadWrite = mmio.MMIO_BASE + 0x00300030 };
+const EMMC_INT_MASK = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300034 };
+const EMMC_INT_EN = Register{ .ReadOnly = mmio.MMIO_BASE + 0x00300038 };
+const EMMC_CONTROL2 = Register{ .ReadOnly = mmio.MMIO_BASE + 0x0030003C };
+const EMMC_SLOTISR_VER = Register{ .ReadOnly = MMIO_BASE + 0x003000FC };
 
 // Control tags
 const CMD_NEED_APP = u32(0x80000000);
@@ -94,7 +96,7 @@ const SCR_SUPP_CSS = u32(0x00000001);
 pub const SDHC = struct {
     var cmdCode = u32(0);
     var sdRca = u32(0);
-    var sdScr = [2]u8{0, 0};
+    var sdScr = [2]u8{ 0, 0 };
     var sdHv = u32(0);
     var retCode = u32(0);
 
@@ -149,7 +151,7 @@ pub const SDHC = struct {
         // unless I'm thinking of something wrong.
 
         // switch(code) {
-            // CMD_SEND_OP_COND => {
+        // CMD_SEND_OP_COND => {
         //         mmio.wait(1000);
         //         if ((getInterrupt(INT_CMD_DONE)) == 1) return SDError.CommandError;
         //     },
@@ -181,7 +183,7 @@ pub const SDHC = struct {
         unreachable;
     }
 
-    pub fn readBlock(blockAddress: u32, buffer: []u8, blkCount: u32) SDError!u32  {
+    pub fn readBlock(blockAddress: u32, buffer: []u8, blkCount: u32) SDError!u32 {
         if (buffer.len > 128) return SDError.BufferError;
         if (blkCount == 0) return SDError.BlockCount;
         _ = getStatus(SR_DAT_INHIBIT) catch |e| {
@@ -198,9 +200,9 @@ pub const SDHC = struct {
         } else {
             mmio.write(EMMC_BLKSIZECNT, ((1 << 16) | 512)).?;
         }
-        var curr = u32(0);
-        var pos = u32(0);
-        while (curr < blkCount) : (curr += 1)  {
+        var curr: u32 = 0;
+        var pos: u32 = 0;
+        while (curr < blkCount) : (curr += 1) {
             if ((sdScr[0] & SCR_SUPP_CSS) == 0) {
                 sendCommand(CMD_READ_SINGLE, ((blockAddress + curr) * 512)) catch |e| return e;
             }
@@ -213,16 +215,31 @@ pub const SDHC = struct {
                 buffer[i] = @truncate(u8, mmio.read(EMMC_DATA).?);
             }
         }
-        if (blkCount > 1 and (sdScr[0] & SCR_SUPP_SET_BLKCNT) == 0 and (sdScr[0] & SCR_SUPP_CSS) == 1) sendCommand(CMD_STOP_TRANS, 0) catch |e| {
-            uart.write("ERROR: Failed to send command!\n");
-            return e;
-        };
+        if (blkCount > 1 and (sdScr[0] & SCR_SUPP_SET_BLKCNT) == 0 and (sdScr[0] & SCR_SUPP_CSS) == 1)
+            sendCommand(CMD_STOP_TRANS, 0) catch |e| {
+                uart.write("ERROR: Failed to send command!\n");
+                return e;
+            };
         // Return the number of bytes read
         return pos;
     }
 
+    // TODO make this work
     pub fn init() SDError!void {
-        // TODO(sam): Port this function
-        unreachable;
+        var r: u32 = 0;
+        var cnt: u32 = 0;
+        var css: u32 = 0;
+
+        // GPIO_CD
+        r = gpio.GPFSEL4;
+        r &= ~(@as(u32, 7 << (7 * 3)));
+        //gpio.GPFSEL4 = r;
+
+        //gpio.GPPUD = 2;
+        delay.wait_cycles(150);
+        //gpio.GPPUDCLK1 = (1 << 15);
+        delay.wait_cycles(150);
+        //gpio.GPPUD = 0;
+        //gpio.GPPUDCLK1 = 0;
     }
 };

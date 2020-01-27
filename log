@@ -1,0 +1,53 @@
+./src/kernel.zig:29:19: error: expression value is ignored
+    emmc.SDHC.init();
+                  ^
+./src/kernel.zig:9:21: note: referenced here
+const Version = util.Version;
+                    ^
+./src/kernel.zig:31:32: note: referenced here
+    uart.write("trOS v{}\r", .{Version});
+                               ^
+./src/kernel.zig:7:21: note: referenced here
+const framebuffer = vga.framebuffer;
+                    ^
+./src/kernel.zig:7:24: note: referenced here
+const framebuffer = vga.framebuffer;
+                       ^
+./src/kernel.zig:32:5: note: referenced here
+    framebuffer.init().?;
+    ^
+./src/kernel.zig:32:16: note: referenced here
+    framebuffer.init().?;
+               ^
+./src/kernel.zig:33:16: note: referenced here
+    framebuffer.write("trOS v{}\r", .{Version});
+               ^
+./src/kernel.zig:35:23: note: referenced here
+        const x = uart.get();
+                      ^
+./src/kernel.zig:36:13: note: referenced here
+        uart.put(x);
+            ^
+./src/kernel.zig:37:20: note: referenced here
+        framebuffer.put(x);
+                   ^
+./src/kernel.zig:27:28: note: referenced here
+export fn kmain() noreturn {
+                           ^
+./src/io/emmc.zig:225:9: error: variable of type 'comptime_int' must be const or comptime
+        var r = 0;
+        ^
+./src/io/emmc.zig:230:9: note: referenced here
+        r = *GPFSEL4;
+        ^
+./src/io/emmc.zig:226:9: error: variable of type 'comptime_int' must be const or comptime
+        var cnt = 0;
+        ^
+./src/io/emmc.zig:227:9: error: variable of type 'comptime_int' must be const or comptime
+        var vss = 0;
+        ^
+trOS...The following command exited with error code 1:
+/usr/local/bin/zig build-exe /home/skye/zig/trOS/src/kernel.zig --c-source /home/skye/zig/trOS/src/asm/boot.S --cache-dir /home/skye/zig/trOS/zig-cache --name trOS -target aarch64v8_5a-freestanding-eabihf -target-cpu generic -target-feature +altnzcv,+am,+bti,+ccdp,+ccidx,+ccpp,+complxnum,+crc,+dit,+dotprod,+fmi,+fptoint,+jsconv,+lor,+lse,+mpam,+nv,+pa,+pan,+pan_rwv,+predres,+ras,+rasv8_4,+rcpc,+rcpc_immo,+rdm,+sb,+sel2,+specrestrict,+ssbs,+tlb_rmi,+tracev8_4,+uaops,+v8a,+v8_1a,+v8_2a,+v8_3a,+v8_4a,+v8_5a,+vh --linker-script /home/skye/zig/trOS/linker.ld --cache on 
+
+Build failed. The following command failed:
+/home/skye/zig/trOS/zig-cache/o/qtboQGItKeVcfk7SebZsFkQozGStsgb2gx-azm2UUYDO9pS1esp3FrA1hvIhxYrj/build /usr/local/bin/zig /home/skye/zig/trOS /home/skye/zig/trOS/zig-cache
