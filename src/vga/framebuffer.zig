@@ -24,6 +24,7 @@ const PSFFont = extern struct {
     width: u32,
 };
 
+// Any of ./*.psf should work for this
 const FontEmbed = @embedFile("UniCyr_8x8.psf");
 
 const Width: u32 = 192;

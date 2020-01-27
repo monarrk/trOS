@@ -13,7 +13,7 @@ pub fn build(b: *Builder) void {
 
     exe.setLinkerScriptPath("./linker.ld");
     // Use eabihf for freestanding arm code with hardware float support
-    exe.setTarget(builtin.Arch{ .aarch64 = builtin.Arch.Arm64.v8 }, builtin.Os.freestanding, builtin.Abi.eabihf);
+    exe.setTarget(builtin.Arch{ .aarch64 = builtin.Arch.Arm64.v8_5a }, builtin.Os.freestanding, builtin.Abi.eabihf);
 
     b.default_step.dependOn(&exe.step);
     b.installArtifact(exe);

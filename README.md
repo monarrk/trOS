@@ -37,8 +37,6 @@ zig build -Drelease-fast
 zig build -Drelease-small
 ```
 
-both of these produce a binary that is about ~5kb.
-
 if you want release optimizations while still having safety checks:
 
 ```
