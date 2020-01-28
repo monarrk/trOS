@@ -136,4 +136,4 @@ pub fn waitMsec(secs: u32) void {
     }
 }
 
-pub const PROMPT = ":: >  ";
+pub const PROMPT = ":: > ";

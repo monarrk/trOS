@@ -30,8 +30,8 @@ fn hang() noreturn {
 }
 
 export fn kmain() noreturn {
-    //uart.init();
-    emmc.SDHC.init() catch hang();
+    uart.init();
+    emmc.SDHC.init() catch uart.write("Failed to init emmc", .{});
 
     uart.write("trOS v{}\r", .{Version});
     framebuffer.init().?;

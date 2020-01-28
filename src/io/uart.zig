@@ -39,7 +39,7 @@ pub fn init() void {
 
     var r: u32 = mmio.read(gpio.GPFSEL1).?;
     // Clean gpio pins 14 and 15
-    r &= ~u32(((7 << 12) | (7 << 15)));
+    r &= ~@as(u32, ((7 << 12) | (7 << 15)));
     // Set alt0 for pins 14 and 15. alt0 functionality on these pins is Tx/Rx
     // respectively for UART0. Note that alt5 on these pins is Tx/Rx for UART1.
     r |= (4 << 12) | (4 << 15);
