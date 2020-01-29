@@ -15,36 +15,19 @@ stuff that is being worked on:
 * networking
 * anything else not mentioned above
 
-# building
+### building
 all you need to build is [zig](https://ziglang.org) itself. grab it and run:
 
 ```
 zig build
 ```
 
-the output file will be in `zig-cache`.
+the output file will be in `zig-cache/bin`.
 
-you can start a gdb remote server:
+### real hardware
+To test this on real hardware, copy `sys/boot/*` to the boot partition in a raspberry pi SD card. Then, copy `zig-cache/bin/trOS` to the SD card as `kernel8.img`
 
-```
-zig build qemu -Dgdb
-```
-
-if you want a very small binary: (NOTE this usually makes the kernel not functional; not recommended)
-
-```
-zig build -Drelease-fast
-# or
-zig build -Drelease-small
-```
-
-if you want release optimizations while still having safety checks:
-
-```
-zig build -Drelease-safe
-```
-
-# credit
+### credit
 
 thanks to [andrew kelly](https://github.com/andrewrk/clashos/) for the build file.
 
