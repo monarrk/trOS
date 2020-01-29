@@ -10,6 +10,7 @@ some stuff that works:
 
 stuff that is being worked on:
 * SD card support (read/write)
+* (non-serial) Keyboard support
 * USB
 * networking
 * anything else not mentioned above

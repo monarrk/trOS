@@ -6,6 +6,7 @@ pub fn build(b: *Builder) void {
     const mode = b.standardReleaseOptions();
     const exe = b.addExecutable("trOS", "src/kernel.zig");
     exe.addAssemblyFile("src/asm/boot.S");
+    exe.addAssemblyFile("src/asm/vector.S");
     exe.setBuildMode(mode);
 
     exe.setLinkerScriptPath("./sys/linker.ld");

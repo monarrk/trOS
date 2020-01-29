@@ -5,16 +5,9 @@ const uart = io.uart;
 const util = @import("util.zig");
 const emmc = io.emmc;
 const framebuffer = vga.framebuffer;
+const int = @import("int.zig");
 
 const Version = util.Version;
-
-// TODO(sam): Take in new boot images from the serial port for easier real hardware testing.
-
-// TODO(sam): Parse input from UART0 and handle commands. Should just be able to
-// read into a buffer, track the index, slice up to it (buffer[0..idx]) and
-// take that as a []const u8 for matching as a command.
-
-// TODO(sam): Re-do docs.
 
 pub fn panic(msg: []const u8, error_stack_trace: ?*builtin.StackTrace) noreturn {
     @setCold(true);
@@ -29,6 +22,10 @@ fn hang() noreturn {
     util.hang();
 }
 
+export fn shortExceptionHandlerAt0x1000() void {
+    int.handler();
+}
+
 export fn kmain() noreturn {
     uart.init();
     emmc.SDHC.init() catch uart.write("Failed to init emmc", .{});
@@ -41,6 +38,8 @@ export fn kmain() noreturn {
         uart.put(x);
         framebuffer.put(x);
     }
+
     // enter low power state and hang if we get somehow get out of the while loop.
+    uart.write("Hanging up system\n", .{});
     hang();
 }

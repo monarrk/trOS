@@ -27,3 +27,38 @@ _start:
 // Call external kmain
 4: bl kmain
   b 1b
+
+exception_vector_table:
+.balign 0x800
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
+.balign 0x80
+b shortExceptionHandlerAt0x1000
