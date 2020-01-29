@@ -1,5 +1,5 @@
 # trOS
-trOS is a small, [zig](https://ziglang.org) and assembly, aarch64 RPI3 bare metal OS thingy.
+trOS is a small [zig](https://ziglang.org) (and assembly) aarch64 RPI3 bare metal OS thingy.
 
 some stuff that works:
 * mailbox calls
