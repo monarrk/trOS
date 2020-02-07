@@ -10,7 +10,6 @@ pub fn build(b: *Builder) void {
     exe.setBuildMode(mode);
 
     exe.setLinkerScriptPath("./sys/linker.ld");
-    // Use eabihf for freestanding arm code with hardware float support
     exe.setTarget(builtin.Arch{ .aarch64 = builtin.Arch.Arm64.v8_5a }, builtin.Os.freestanding, builtin.Abi.eabihf);
 
     b.default_step.dependOn(&exe.step);

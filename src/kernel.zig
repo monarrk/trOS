@@ -17,7 +17,7 @@ pub fn panic(msg: []const u8, error_stack_trace: ?*builtin.StackTrace) noreturn 
     util.hang();
 }
 
-fn hang() noreturn {
+fn hangup() noreturn {
     util.powerOff();
     util.hang();
 }
@@ -41,5 +41,5 @@ export fn kmain() noreturn {
 
     // enter low power state and hang if we get somehow get out of the while loop.
     uart.write("Hanging up system\n", .{});
-    hang();
+    hangup();
 }

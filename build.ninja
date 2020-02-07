@@ -1,0 +1,10 @@
+GNU = aarch64-linux-gnu
+
+rule zigc
+ command = zig build
+
+rule mkimg
+ command = "$GNU"-objcopy $in -O binary $out
+
+build zig-cache/bin/trOS: zigc
+build kernel.img: mkimg zig-cache/bin/trOS

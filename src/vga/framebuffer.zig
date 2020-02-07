@@ -42,16 +42,16 @@ var LFB: [*]volatile u8 = undefined;
 
 fn load_font() PSFFont {
     const bytes = FontEmbed;
-    var magic = @bitCast(u32, [4]u8 { bytes[0], bytes[1], bytes[2], bytes[3] });
-    var version = @bitCast(u32, [4]u8 { bytes[4], bytes[5], bytes[6], bytes[7] });
-    var headersize = @bitCast(u32, [4]u8 { bytes[8], bytes[9], bytes[10], bytes[11] });
-    var flags = @bitCast(u32, [4]u8 { bytes[12], bytes[13], bytes[14], bytes[15] });
-    var numglyph = @bitCast(u32, [4]u8 { bytes[16], bytes[17], bytes[18], bytes[19] });
-    var bytesPerGlyph = @bitCast(u32, [4]u8 { bytes[20], bytes[21], bytes[22], bytes[23] });
-    var height = @bitCast(u32, [4]u8 { bytes[24], bytes[25], bytes[26], bytes[27] });
-    var width = @bitCast(u32, [4]u8 { bytes[28], bytes[29], bytes[30], bytes[31] });
+    var magic = @bitCast(u32, [4]u8{ bytes[0], bytes[1], bytes[2], bytes[3] });
+    var version = @bitCast(u32, [4]u8{ bytes[4], bytes[5], bytes[6], bytes[7] });
+    var headersize = @bitCast(u32, [4]u8{ bytes[8], bytes[9], bytes[10], bytes[11] });
+    var flags = @bitCast(u32, [4]u8{ bytes[12], bytes[13], bytes[14], bytes[15] });
+    var numglyph = @bitCast(u32, [4]u8{ bytes[16], bytes[17], bytes[18], bytes[19] });
+    var bytesPerGlyph = @bitCast(u32, [4]u8{ bytes[20], bytes[21], bytes[22], bytes[23] });
+    var height = @bitCast(u32, [4]u8{ bytes[24], bytes[25], bytes[26], bytes[27] });
+    var width = @bitCast(u32, [4]u8{ bytes[28], bytes[29], bytes[30], bytes[31] });
 
-    return PSFFont {
+    return PSFFont{
         .magic = magic,
         .version = version,
         .headersize = headersize,
@@ -64,15 +64,15 @@ fn load_font() PSFFont {
 }
 
 pub fn init() ?void {
-    mbox.mbox[0] = 35*4;
+    mbox.mbox[0] = 35 * 4;
     mbox.mbox[1] = mbox.MBOX_REQUEST;
-    mbox.mbox[2] = 0x48003;  //set phy wh
+    mbox.mbox[2] = 0x48003; //set phy wh
     mbox.mbox[3] = 8;
     mbox.mbox[4] = 8;
     mbox.mbox[5] = 1920;
     mbox.mbox[6] = 1080;
 
-    mbox.mbox[7] = 0x48004;  //set virt wh
+    mbox.mbox[7] = 0x48004; //set virt wh
     mbox.mbox[8] = 8;
     mbox.mbox[9] = 8;
     mbox.mbox[10] = 1920;
@@ -124,7 +124,7 @@ pub fn put(c: u8) void {
     var offset: usize = (row * Font.height * Pitch) + (column * (Font.width + 1) * 4);
     var idx: usize = 0;
 
-    switch(c) {
+    switch (c) {
         '\r' => {
             for ("\n" ++ util.PROMPT) |d|
                 put(d);
@@ -161,7 +161,6 @@ pub fn put(c: u8) void {
             var y: usize = 0;
             while (y < Font.height) : (y += 1) {
                 var line = offset;
-                // [TODO] Segfaulting!!
                 var mask = @as(u32, 1) << @truncate(u5, (Font.width - 1));
                 var x: u32 = 0;
                 while (x < Font.width) : (x += 1) {
@@ -202,7 +201,7 @@ fn writeHandler(context: void, data: []const u8) NoError!void {
 /// same manner that `std.debug.warn()` does. It then passes them to `writeHandler`
 /// for writing out.
 pub fn write(comptime data: []const u8, args: var) void {
-    std.fmt.format({}, NoError, writeHandler, data, args) catch |e| switch (e) {}; 
+    std.fmt.format({}, NoError, writeHandler, data, args) catch |e| switch (e) {};
 }
 
 // @PENDING-FIX: Test fails with: "TODO buf_read_value_bytes packed struct"
