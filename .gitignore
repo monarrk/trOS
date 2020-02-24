@@ -2,4 +2,4 @@ zig-cache/
 *.img
 log
 trOS
-.ninja_
+.ninja_*
