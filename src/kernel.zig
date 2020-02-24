@@ -33,6 +33,7 @@ export fn kmain() noreturn {
     uart.write("trOS v{}\r", .{Version});
     framebuffer.init().?;
     framebuffer.write("trOS v{}\r", .{Version});
+
     while (true) {
         const x = uart.get();
         uart.put(x);

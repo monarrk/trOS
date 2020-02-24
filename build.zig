@@ -1,6 +1,7 @@
 const builtin = @import("builtin");
 const std = @import("std");
 const Builder = std.build.Builder;
+const Target = std.Target;
 
 pub fn build(b: *Builder) void {
     const mode = b.standardReleaseOptions();
@@ -10,7 +11,15 @@ pub fn build(b: *Builder) void {
     exe.setBuildMode(mode);
 
     exe.setLinkerScriptPath("./sys/linker.ld");
-    exe.setTarget(builtin.Arch{ .aarch64 = builtin.Arch.Arm64.v8_5a }, builtin.Os.freestanding, builtin.Abi.eabihf);
+    exe.setTheTarget(Target.parse( .{ 
+        .arch_os_abi = "aarch64-freestanding-eabihf", 
+        .cpu_features = "generic+v8a"
+    }) catch { 
+        std.debug.warn("Failed to set target!\n", .{});
+        return;
+     });
+
+    exe.install();
 
     b.default_step.dependOn(&exe.step);
     b.installArtifact(exe);

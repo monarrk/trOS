@@ -1,5 +1,6 @@
 const io = @import("io.zig");
 const types = @import("types.zig");
+const config = @import("config.zig");
 const mmio = io.mmio;
 const mbox = io.mbox;
 const gpio = io.gpio;
@@ -136,4 +137,4 @@ pub fn waitMsec(secs: u32) void {
     }
 }
 
-pub const PROMPT = ":: > ";
+pub const PROMPT = config.PROMPT;
