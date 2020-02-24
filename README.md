@@ -17,10 +17,11 @@ stuff that is being worked on:
 
 ### building
 all you need to build is [zig](https://ziglang.org) itself. grab it and run:
-
 ```
 zig build
 ```
+
+to also create an img file, you can use `ninja` to build both the OS and the kernel.img, or you can use `sys/mkimg.sh`.
 
 the output file will be in `zig-cache/bin`.
 
