@@ -6,6 +6,7 @@ const util = @import("util.zig");
 const emmc = io.emmc;
 const framebuffer = vga.framebuffer;
 const int = @import("int.zig");
+const stdio = @import("lib/stdio.zig");
 
 const Version = util.Version;
 
@@ -22,6 +23,7 @@ fn hangup() noreturn {
     util.hang();
 }
 
+// From ClashOS
 export fn shortExceptionHandlerAt0x1000() void {
     int.handler();
 }

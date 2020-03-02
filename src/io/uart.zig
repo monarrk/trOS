@@ -87,6 +87,17 @@ pub fn get() u8 {
     return @truncate(u8, mmio.read(UART_DR).?);
 }
 
+pub fn hex(d: u32) void {
+    var n: u32 = 0;
+    var c: u32 = 28;
+    while (c >= 0) {
+        n = (d >> @truncate(u5, c)) & 0xF;
+        //n += n > 9 ? 0x37 : 0x30;
+        if (n > 9) n += 0x37 else n += 0x30;
+        c -= 4;
+    }
+}
+
 pub fn writeBytes(data: []const u8) void {
     for (data) |c| {
         put(c);

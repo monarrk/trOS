@@ -11,13 +11,13 @@ pub fn build(b: *Builder) void {
     exe.setBuildMode(mode);
 
     exe.setLinkerScriptPath("./sys/linker.ld");
-    exe.setTheTarget(Target.parse( .{ 
-        .arch_os_abi = "aarch64-freestanding-eabihf", 
-        .cpu_features = "generic+v8a"
-    }) catch { 
+    exe.setTarget(std.zig.CrossTarget.parse(.{
+        .arch_os_abi = "aarch64-freestanding-eabihf",
+        .cpu_features = "generic+v8a",
+    }) catch {
         std.debug.warn("Failed to set target!\n", .{});
         return;
-     });
+    });
 
     exe.install();
 
